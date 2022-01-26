@@ -2,6 +2,9 @@
 import time
 from selenium import webdriver
 from selenium.common.exceptions import *
+from io import BytesIO
+from PIL import Image
+import ddddocr
 
 # chrome driver 路径
 CHROME_DRIVER_ABSPATH = r"C:\Users\ASUS\AppData\Local\Microsoft\WindowsApps\chromedriver.exe"
@@ -45,7 +48,6 @@ class SignIn:
     def input_url(self, url=None):
         """
         url:网址
-        number:窗口数
         """
         url = self._url if self._url and not url else url
         current_url = self._driver.current_url
@@ -84,9 +86,7 @@ class SignIn:
         while not code:
             self._driver.find_element_by_xpath(yzm_xpath).click()
             time.sleep(1)
-
-            from io import BytesIO
-            from PIL import Image
+           
             # 截取全图,bytes 转 PIL
             image = BytesIO(self._driver.get_screenshot_as_png())
             login_img = Image.open(image)
@@ -107,7 +107,6 @@ class SignIn:
             img_bytes = img_buffer.getvalue()
 
             # 识别验证码
-            import ddddocr
             ocr = ddddocr.DdddOcr(old=False, show_ad=False)
             code = ocr.classification(img_bytes)
             # 输入验证码
